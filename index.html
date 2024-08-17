@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Demo: Add points to a web map</title>
+    <title>Safe Junctions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <link
@@ -64,8 +64,8 @@
       var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6',
-        center: [77.613, 12.975],
-        zoom: 10.7
+        center: [77.682, 12.974],
+        zoom: 9.5
       });
         
       
@@ -90,15 +90,36 @@
       
       // Set cursor style for specific layer interaction
         map.on('load', () => {
-        map.on('mouseenter', 'Suraksha 75', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseenter', 'Ongoing Junctions', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseenter', 'Prospective Locations', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
+          const layers = [
+            '0-10',
+            '10-20',
+            '20-50',
+            '50-100',
+            '100-200',
+            '200-500',
+            '500-1000',
+            '1000+'
+          ];
+          const colors = [
+            '#FFEDA0',
+            '#FED976',
+            '#FEB24C',
+            '#FD8D3C',
+            '#FC4E2A',
+            '#E31A1C',
+            '#BD0026',
+            '#800026'
+          ];
+        //mouse enter
+            map.on('mouseenter', 'Suraksha 75', () => {
+              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+            });
+            map.on('mouseenter', 'Ongoing Junctions', () => {
+              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+            });
+            map.on('mouseenter', 'Prospective Locations', () => {
+              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+            });
 
         map.on('mouseleave', 'Suraksha 75', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
