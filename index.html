@@ -15,111 +15,117 @@
         padding: 0;
       }
 
-
-      .switch {
+      .toggleBG {
         position: absolute;
         top: 33px;
         right: 73px;
-        display: inline-block;
-        width: 149px;
+        width: 178px;
+        height: 43px;
+        background-color: rgba(0, 0, 0, 0.336);
+        z-index: 1;
+        border-radius: 20px;
+      }
+
+      .toggleButton {
+        position: absolute;
+        top: 33px;
+        right: 73px;
+        width: 130px;
         height: 39px;
-        z-index: 1;
-
-      }
-
-      .switch input {display:none;}
-
-      .slider {
-        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'Barrow', sans-serif;
+        font-size: 17px;
+        font-weight: 400; /* Regular weight */
+        border: 2px solid rgba(255, 255, 255, 0.363); /* Optional: border for the box */
+        padding: 0 22px; /* Half of the gap size to center the content */
+        z-index: 3;
+        border-radius: 20px;
+        color: white;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0);
-        -webkit-transition: .4s;
-        transition: .4s;
-        border-radius: 25px;
+        user-select: none;
+        
       }
 
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 35px;
-        width: 79px;
-        background-color: rgba(0, 0, 0, 0);
-        transition: .4s;
-        border-radius: 25px;
-        font-size: 12px;
-        font-family: Barrow, sans-serif;
-        font-weight: 700; /* Medium weight */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
+      .text {
+        display: inline-block;
+        transition: opacity 0.4s; /* Smooth transition for text opacity */
       }
 
-      .slider:after {
+      .gap {
+        width: 22px; /* The gap between DARK and LIGHT */
+      }
+
+      .toggleSlider {
         position: absolute;
-        content: "";
-        right:0px;
-        height: 34px;
+        top: 35px;
+        right: 155px;
         width: 50px;
-        transition: .4s;
-        border-radius: 25px;
-        font-size: 12px;
-        font-family: Barrow, sans-serif;
-        font-weight: 700; /* Medium weight */
+        height: 39px;
+        background-color: #F15C61;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
+        font-family: 'Barrow', sans-serif;
+        font-size: 17px;
+        font-weight: 400; /* Regular weight */
+        padding: 0 22px; /* Half of the gap size to center the content */
+        z-index: 2;
+        border-radius: 18px;
+        transition: transform 0.4s; /* Smooth transition for slider movement */
       }
 
-      input:checked + .slider:before {
-        background-color: rgba(0, 0, 0, 0);
-        content: "";
+      .dark-active .toggleSlider {
+        transform: translateX(0); /* Position for DARK */
       }
 
-      input:checked + .slider:after {
-        content: "";
+      .light-active .toggleSlider {
+        transform: translateX(80px); /* Position for LIGHT */
       }
 
-      input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
+      .dark-active .text.dark {
+        opacity: 1; /* Fully opaque when DARK mode is active */
       }
 
-      input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(70px);
-      }
-      input:checked + .slider:after {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(-50px);
+      .light-active .text.dark {
+        color: #f15c61b7; /*Dark becomes Pink when Light is selected */
       }
 
-      /*------ ADDED CSS ---------*/
-      
+      .dark-active .text.light {
+        color: #f15c61b7; /* Light becomes Pink when Dark is selected*/
+      }
 
+      .light-active .text.light {
+        opacity: 1; /* Fully opaque when LIGHT mode is active */
+      }
+      /* Hover effects */
+      .text.dark:hover,
+      .text.dark:focus {
+        color: #ffffffa8; /* Change color to pink when DARK is hovered */
+      }
 
-      /*--------- END --------*/
+      .text.light:hover,
+      .text.light:focus {
+        color: #ffffffa8; /* Change color to pink when LIGHT is hovered */
+      }
       #map {
         position: absolute;
         top: 0;
         bottom: 0;
         width: 100%;
       }
-       /* Default cursor style */
-       #map {
+
+      /* Default cursor style */
+      #map {
         cursor: default;
       }
-      
+
       /* Arrow cursor style */
       .mapboxgl-canvas {
         cursor: default; /* Arrow pointer for default behavior */
       }
-      
+
       .mapboxgl-canvas-pointer {
         cursor: pointer; /* Hand pointer when interacting with features */
       }
@@ -127,77 +133,58 @@
   </head>
 
   <body>
-
-    // Toggle button element
-          <label class="switch">
-          <input type="checkbox" id="toggleButton">
-            <div class="slider round">
-            
-            </div>
-          </label>
-
+    <div class="toggleBG"></div>
+    <div class="toggleButton" id="toggleButton">
+      <span class="text dark">DARK</span>
+      <span class="gap"></span>
+      <span class="text light">LIGHT</span>
+    </div>
+    <div class="toggleSlider"></div>
     <div id="map"></div>
     <script>
-
-      //access token
       mapboxgl.accessToken = 'pk.eyJ1Ijoic3R1ZGlvdXJiYW4iLCJhIjoiY2x3cTIwcG83MWtxYjJrbnh3YnIzdHF1YSJ9.G_vrrjKBmzTTYlJ0tgjrBw';
 
-      //map division
       var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6',
         center: [77.682, 12.974],
         zoom: 9.5
       });
-        
-      
-          // Toggle button element
-        const toggleButton = document.getElementById('toggleButton');
 
-          // Toggle function
-          toggleButton.onclick = function() {
-          if (toggleButton.checked) {
-            // Switch to light style
-            map.setStyle('mapbox://styles/studiourban/clzxtd54p004001qo89bzgrsd');
-          } else {
-            // Switch to dark style
-            map.setStyle('mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6');
-          }
-          };
+      const toggleButton = document.getElementById('toggleButton');
+      const toggleSlider = document.querySelector('.toggleSlider');
 
-      
+      // Initialize the state
+      let isDark = true;
+      document.body.classList.remove('light-active');
+      document.body.classList.add('dark-active');
+
+      toggleButton.onclick = function() {
+        if (isDark) {
+          // Switch to light style
+          map.setStyle('mapbox://styles/studiourban/clzxtd54p004001qo89bzgrsd');
+          document.body.classList.remove('dark-active');
+          document.body.classList.add('light-active');
+        } else {
+          // Switch to dark style
+          map.setStyle('mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6');
+          document.body.classList.remove('light-active');
+          document.body.classList.add('dark-active');
+        }
+        isDark = !isDark; // Toggle the state
+      };
+
       // Set cursor style for specific layer interaction
-        map.on('load', () => {
-          const layers = [
-            '0-10',
-            '10-20',
-            '20-50',
-            '50-100',
-            '100-200',
-            '200-500',
-            '500-1000',
-            '1000+'
-          ];
-          const colors = [
-            '#FFEDA0',
-            '#FED976',
-            '#FEB24C',
-            '#FD8D3C',
-            '#FC4E2A',
-            '#E31A1C',
-            '#BD0026',
-            '#800026'
-          ];
-        //mouse enter
-            map.on('mouseenter', 'Suraksha 75', () => {
-              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-            });
-            map.on('mouseenter', 'Ongoing Junctions', () => {
-              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-            });
-            map.on('mouseenter', 'Prospective Locations', () => {
-              map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-            });
+      map.on('load', () => {
+        map.on('mouseenter', 'Suraksha 75', () => {
+          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+        });
+        map.on('mouseenter', 'Ongoing Junctions', () => {
+          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+        });
+        map.on('mouseenter', 'Prospective Locations', () => {
+          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+        });
 
         map.on('mouseleave', 'Suraksha 75', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
@@ -205,61 +192,32 @@
         map.on('mouseleave', 'Ongoing Junctions', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
         });
-        map.on('mouseleave', 'Propsective Locations', () => {
+        map.on('mouseleave', 'Prospective Locations', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
         });
       });
-      
-      //Suraksha 75
+
+      // Map click handlers
       map.on('click', (event) => {
-        const features = map.queryRenderedFeatures(event.point, {layers: ['Suraksha 75']});
-        if (!features.length) {
-          return;
-        }
-        const feature = features[0];
+        const layers = {
+          'Suraksha 75': ['Name', 'Agency'],
+          'Ongoing Junctions': ['Name', 'Agency', 'Status'],
+          'Prospective Locations': ['Name', 'QueueLeng']
+        };
 
-        const popup = new mapboxgl.Popup({ offset: [0, -15] })
-          .setLngLat(feature.geometry.coordinates)
-          .setHTML(
-            `<h3>${feature.properties.Name}</h3><p>${feature.properties.Agency}</p>`
-          )
-          .addTo(map);
+        Object.keys(layers).forEach(layer => {
+          const features = map.queryRenderedFeatures(event.point, { layers: [layer] });
+          if (features.length) {
+            const feature = features[0];
+            const popup = new mapboxgl.Popup({ offset: [0, -15] })
+              .setLngLat(feature.geometry.coordinates)
+              .setHTML(
+                `<h3>${feature.properties.Name}</h3>${layers[layer].map(prop => `<p>${feature.properties[prop]}</p>`).join('')}`
+              )
+              .addTo(map);
+          }
+        });
       });
-
-      //Ongoing Junctions
-      map.on('click', (event) => {
-        const features = map.queryRenderedFeatures(event.point, {layers: ['Ongoing Junctions']});
-        if (!features.length) {
-          return;
-        }
-        const feature = features[0];
-
-        const popup = new mapboxgl.Popup({ offset: [0, -15] })
-          .setLngLat(feature.geometry.coordinates)
-          .setHTML(
-            `<h3>${feature.properties.Name}</h3><p>${feature.properties.Agency}</p><p>${feature.properties.Status}</p>`
-          )
-          .addTo(map);
-      });
-
-      //Propsective Junctions
-      map.on('click', (event) => {
-        const features = map.queryRenderedFeatures(event.point, {layers: ['Prospective Locations']});
-        if (!features.length) {
-          return;
-        }
-        const feature = features[0];
-
-        const popup = new mapboxgl.Popup({ offset: [0, -15] })
-          .setLngLat(feature.geometry.coordinates)
-          .setHTML(
-            `<h3>${feature.properties.Name}</h3><p>${feature.properties.QueueLeng}</p>`
-          )
-          .addTo(map);
-      });
-
     </script>
   </body>
-
-  
 </html>
