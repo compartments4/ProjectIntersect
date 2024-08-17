@@ -5,6 +5,7 @@
     <title>Safe Junctions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
     <link
       href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
       rel="stylesheet"
@@ -17,29 +18,29 @@
 
       .toggleBG {
         position: absolute;
-        top: 33px;
+        top: 35px;
         right: 73px;
-        width: 178px;
-        height: 43px;
+        width: 161px;
+        height: 40px;
         background-color: rgba(0, 0, 0, 0.336);
         z-index: 1;
-        border-radius: 20px;
+        border-radius: 18px;
       }
 
       .toggleButton {
         position: absolute;
         top: 33px;
         right: 73px;
-        width: 130px;
+        width: 120px;
         height: 39px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-family: 'Barrow', sans-serif;
+        font-family: 'Barlow', sans-serif;
         font-size: 17px;
         font-weight: 400; /* Regular weight */
         border: 2px solid rgba(255, 255, 255, 0.363); /* Optional: border for the box */
-        padding: 0 22px; /* Half of the gap size to center the content */
+        padding: 0 20px; /* Half of the gap size to center the content */
         z-index: 3;
         border-radius: 20px;
         color: white;
@@ -60,14 +61,14 @@
       .toggleSlider {
         position: absolute;
         top: 35px;
-        right: 155px;
-        width: 50px;
+        right: 151px;
+        width: 40px;
         height: 39px;
         background-color: #F15C61;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-family: 'Barrow', sans-serif;
+        font-family: 'Barlow', sans-serif;
         font-size: 17px;
         font-weight: 400; /* Regular weight */
         padding: 0 22px; /* Half of the gap size to center the content */
@@ -81,7 +82,7 @@
       }
 
       .light-active .toggleSlider {
-        transform: translateX(80px); /* Position for LIGHT */
+        transform: translateX(75px); /* Position for LIGHT */
       }
 
       .dark-active .text.dark {
