@@ -16,94 +16,6 @@
       }
 
 
-      .switch {
-        position: absolute;
-        top: 33px;
-        right: 76px;
-        display: inline-block;
-        width: 100px;
-        height: 34px;
-        z-index: 1;
-
-      }
-
-      .switch input {display:none;}
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        -webkit-transition: .4s;
-        transition: .4s;
-        border-radius: 25px;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "DARK";
-        height: 34px;
-        width: 50px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 25px;
-        font-size: 12px;
-        font-family: Barrow, sans-serif;
-        font-weight: 700; /* Medium weight */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-      }
-
-      .slider:after {
-        position: absolute;
-        content: "LIGHT";
-        right:0px;
-        height: 34px;
-        width: 50px;
-        transition: .4s;
-        border-radius: 25px;
-        font-size: 12px;
-        font-family: Barrow, sans-serif;
-        font-weight: 700; /* Medium weight */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      input:checked + .slider:before {
-        background-color: white;
-        content: "LIGHT";
-      }
-
-      input:checked + .slider:after {
-        content: "DARK";
-      }
-
-      input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
-      }
-
-      input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(50px);
-      }
-      input:checked + .slider:after {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(-50px);
-      }
-
-      /*------ ADDED CSS ---------*/
-      
-
-
-      /*--------- END --------*/
       #map {
         position: absolute;
         top: 0;
@@ -128,13 +40,6 @@
 
   <body>
 
-    // Toggle button element
-          <label class="switch">
-          <input type="checkbox" id="toggleButton">
-            <div class="slider round">
-            
-            </div>
-          </label>
 
     <div id="map"></div>
     <script>
