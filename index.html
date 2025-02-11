@@ -148,8 +148,8 @@
       var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6',
-        center: [77.682, 12.974],
-        zoom: 9.5
+        center: [77.612, 12.966],
+        zoom: 10.09
       });
 
       const toggleButton = document.getElementById('toggleButton');
@@ -183,7 +183,10 @@
         map.on('mouseenter', 'Ongoing Junctions', () => {
           map.getCanvas().classList.add('mapboxgl-canvas-pointer');
         });
-        map.on('mouseenter', 'Prospective Locations', () => {
+        map.on('mouseenter', 'Selected Blackspots', () => {
+          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+        });
+        map.on('mouseenter', 'Top 10 Blackspots', () => {
           map.getCanvas().classList.add('mapboxgl-canvas-pointer');
         });
 
@@ -193,32 +196,140 @@
         map.on('mouseleave', 'Ongoing Junctions', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
         });
-        map.on('mouseleave', 'Prospective Locations', () => {
+        map.on('mouseleave', 'Selected Blackspots', () => {
           map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
         });
-      });
+        map.on('mouseleave', 'Top 10 Blackspots', () => {
+          map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
+        });
+
+          // Define legend details with actual layer styles
+          const legendLayers = {
+  'Suraksha 75': { fill: 'rgb(255, 0, 0)', stroke: 'rgb(180, 0, 0)' }, // Red
+  'Ongoing Junctions': { fill: 'hsla(242, 100%, 48%, 0.87)', stroke: 'hsl(232, 31%, 62%)' }, // Blue
+  'Selected Blackspots': { fill: 'rgb(0, 0, 255)', stroke: 'rgb(0, 0, 180)' }, // Blue
+  'Top 10 Blackspots': { fill: 'rgb(255, 165, 0)', stroke: 'rgb(200, 120, 0)' }, // Orange
+  'Crash Points': { fill: 'rgb(128, 0, 128)', stroke: 'rgb(90, 0, 90)' }, // Purple
+};
+
+  // Create legend container
+  const legend = document.createElement('div');
+  legend.id = 'legend';
+  legend.style.position = 'absolute';
+  legend.style.bottom = '20px';
+  legend.style.right = '20px';
+  legend.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+  legend.style.padding = '10px';
+  legend.style.borderRadius = '8px';
+  legend.style.fontFamily = "'Barlow', sans-serif";
+  legend.style.fontSize = '14px';
+  legend.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+  legend.style.maxWidth = '200px';
+
+  // Add legend title
+  const legendTitle = document.createElement('div');
+  legendTitle.innerHTML = '<strong>Legend</strong>';
+  legendTitle.style.marginBottom = '5px';
+  legend.appendChild(legendTitle);
+
+  // Add legend items
+  Object.keys(legendLayers).forEach(layer => {
+    const item = document.createElement('div');
+    item.style.display = 'flex';
+    item.style.alignItems = 'center';
+    item.style.marginBottom = '5px';
+
+    // Checkbox
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true; // Default: All layers visible
+    checkbox.style.marginRight = '8px';
+    checkbox.addEventListener('change', () => {
+      const visibility = checkbox.checked ? 'visible' : 'none';
+      if (map.getLayer(layer)) {
+        map.setLayoutProperty(layer, 'visibility', visibility);
+      }
+    });
+
+    // Color key
+    const key = document.createElement('span');
+    key.style.width = '12px';
+    key.style.height = '12px';
+    key.style.display = 'inline-block';
+    key.style.marginRight = '8px';
+    key.style.borderRadius = layer === 'Crash Data Heat Map' ? '0' : '50%'; // Circle for points, square for heatmap
+
+    if (layer === 'Crash Data Heat Map') {
+      key.style.background = legendLayers[layer]; // Gradient for heatmap
+    } else {
+      key.style.backgroundColor = legendLayers[layer]; // Solid color for other layers
+    }
+
+    // Layer label
+    const label = document.createElement('span');
+    label.innerText = layer;
+
+    // Assemble elements
+    item.appendChild(checkbox);
+    item.appendChild(key);
+    item.appendChild(label);
+    legend.appendChild(item);
+  });
+
+  // Add legend to the map container
+  document.body.appendChild(legend);
+
+});
+
 
       // Map click handlers
       map.on('click', (event) => {
-        const layers = {
-          'Suraksha 75': ['Name', 'Agency'],
-          'Ongoing Junctions': ['Name', 'Agency', 'Status'],
-          'Prospective Locations': ['Name', 'QueueLeng']
-        };
+  const zoomLevel = map.getZoom(); // Get current zoom level
 
-        Object.keys(layers).forEach(layer => {
-          const features = map.queryRenderedFeatures(event.point, { layers: [layer] });
-          if (features.length) {
-            const feature = features[0];
-            const popup = new mapboxgl.Popup({ offset: [0, -15] })
-              .setLngLat(feature.geometry.coordinates)
-              .setHTML(
-                `<h3>${feature.properties.Name}</h3>${layers[layer].map(prop => `<p>${feature.properties[prop]}</p>`).join('')}`
-              )
-              .addTo(map);
-          }
-        });
-      });
+  const layers = {
+    'Suraksha 75': ['Agency'],
+    'Ongoing Junctions': ['Agency'],
+    'Selected Blackspots': ['Agency'],
+    'Top 10 Blackspots': [
+      { key: 'Rank', label: 'Rank' },
+      { key: 'Fatalities within 250m Radius (2019-2022)', label: 'Fatalities' }
+    ]
+  };
+
+  Object.keys(layers).forEach(layer => {
+    const features = map.queryRenderedFeatures(event.point, { layers: [layer] });
+
+    if (features.length) {
+      const feature = features[0];
+
+      let popupContent = `<h3>${feature.properties.Name || 'Unknown'}</h3>`;
+
+      // Show additional details only if zoom level > 10
+      if (zoomLevel > 10) {
+        const details = layers[layer]
+          .map(prop => {
+            if (typeof prop === 'object') {
+              const value = feature.properties[prop.key];
+              return value !== undefined ? `<p><strong>${prop.label}:</strong> ${value}</p>` : '';
+            } else {
+              return feature.properties[prop] !== undefined ? `<p>${feature.properties[prop]}</p>` : '';
+            }
+          })
+          .join('');
+
+        popupContent += details;
+      }
+
+      new mapboxgl.Popup({ offset: [0, -15] })
+        .setLngLat(feature.geometry.coordinates)
+        .setHTML(popupContent)
+        .addTo(map);
+    }
+  });
+});
+
+
+
     </script>
   </body>
 </html>
