@@ -5,131 +5,138 @@
     <title>Safe Junctions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300;400;500;700&display=swap" rel="stylesheet" />
     <link
       href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css"
       rel="stylesheet"
     />
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
+      body { margin: 0; padding: 0; }
+      #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-      .toggleBG {
-        position: absolute;
-        top: 35px;
-        right: 73px;
-        width: 161px;
-        height: 40px;
-        background-color: rgba(0, 0, 0, 0.336);
-        z-index: 1;
-        border-radius: 18px;
-      }
-
-      .toggleButton {
-        position: absolute;
-        top: 33px;
-        right: 73px;
-        width: 120px;
-        height: 39px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'Barlow', sans-serif;
-        font-size: 17px;
-        font-weight: 400; /* Regular weight */
-        border: 2px solid rgba(255, 255, 255, 0.363); /* Optional: border for the box */
-        padding: 0 20px; /* Half of the gap size to center the content */
-        z-index: 3;
-        border-radius: 20px;
-        color: white;
-        cursor: pointer;
-        user-select: none;
-        
-      }
-
-      .text {
-        display: inline-block;
-        transition: opacity 0.4s; /* Smooth transition for text opacity */
-      }
-
-      .gap {
-        width: 22px; /* The gap between DARK and LIGHT */
-      }
-
-      .toggleSlider {
-        position: absolute;
-        top: 35px;
-        right: 151px;
-        width: 40px;
-        height: 39px;
-        background-color: #F15C61;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'Barlow', sans-serif;
-        font-size: 17px;
-        font-weight: 400; /* Regular weight */
-        padding: 0 22px; /* Half of the gap size to center the content */
-        z-index: 2;
-        border-radius: 18px;
-        transition: transform 0.4s; /* Smooth transition for slider movement */
-      }
-
-      .dark-active .toggleSlider {
-        transform: translateX(0); /* Position for DARK */
-      }
-
-      .light-active .toggleSlider {
-        transform: translateX(75px); /* Position for LIGHT */
-      }
-
-      .dark-active .text.dark {
-        opacity: 1; /* Fully opaque when DARK mode is active */
-      }
-
-      .light-active .text.dark {
-        color: #f15c61b7; /*Dark becomes Pink when Light is selected */
-      }
-
-      .dark-active .text.light {
-        color: #f15c61b7; /* Light becomes Pink when Dark is selected*/
-      }
-
-      .light-active .text.light {
-        opacity: 1; /* Fully opaque when LIGHT mode is active */
-      }
-      /* Hover effects */
-      .text.dark:hover,
-      .text.dark:focus {
-        color: #ffffffa8; /* Change color to pink when DARK is hovered */
-      }
-
-      .text.light:hover,
-      .text.light:focus {
-        color: #ffffffa8; /* Change color to pink when LIGHT is hovered */
-      }
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-      }
+      /* Toggle Button Styles */
+        .toggleBG {
+              position: absolute; top: 35px; right: 73px;
+              width: 161px; height: 40px;
+              background-color: rgba(0, 0, 0, 0.336);
+              z-index: 1; border-radius: 18px;
+          }
+          .toggleButton {
+              position: absolute; top: 33px; right: 73px;
+              width: 120px; height: 39px;
+              display: flex; justify-content: space-between; align-items: center;
+              font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 400;
+              border: 2px solid rgba(255, 255, 255, 0.363);
+              padding: 0 20px; z-index: 3; border-radius: 20px;
+              color: white; cursor: pointer; user-select: none;
+          }
+          .toggleSlider {
+              position: absolute; top: 35px; right: 151px;
+              width: 40px; height: 39px;
+              background-color: #F15C61; display: flex;
+              justify-content: space-between; align-items: center;
+              font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 400;
+              padding: 0 22px; z-index: 2; border-radius: 18px;
+              transition: transform 0.4s;
+          }
+          .dark-active .toggleSlider { transform: translateX(0); }
+          .light-active .toggleSlider { transform: translateX(75px); }
+          .dark-active .text.dark, .light-active .text.light { opacity: 1; }
+          .light-active .text.dark, .dark-active .text.light { color: #f15c61b7; }
 
       /* Default cursor style */
-      #map {
-        cursor: default;
+      #map {  cursor: default;}
+      .mapboxgl-canvas {cursor: default; /* Arrow pointer for default behavior */}
+      .mapboxgl-canvas-pointer {cursor: pointer; /* Hand pointer when interacting with features */}
+      
+      /* Legend Container */
+      #legend {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        max-width: 200px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 3px solid rgba(112, 112, 112, 0.4);
+        background-color: rgba(28, 68, 84, 0.65);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        font: 200 18px 'Barlow', sans-serif;
+        color: rgb(199, 232, 243);
       }
 
-      /* Arrow cursor style */
-      .mapboxgl-canvas {
-        cursor: default; /* Arrow pointer for default behavior */
+      /* Legend Title */
+      #legend-title {
+        margin-bottom: 10px;
+        font: 500 20px 'Barlow', sans-serif;
+        color: #F15C61;
       }
 
-      .mapboxgl-canvas-pointer {
-        cursor: pointer; /* Hand pointer when interacting with features */
+      /* Legend Items */
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
       }
+
+      /* Color Key */
+      .legend-key {
+        width: 12px;
+        height: 12px;
+        margin-right: 8px;
+        border-radius: 50%;
+        border: 2px solid rgba(28, 68, 84, 0.65);
+      }
+
+      /* Gradient for Heatmap */
+      .legend-heatmap {
+        width: 15px;
+        height: 40px;
+        background: linear-gradient(to bottom, rgb(243, 27, 27), rgba(244, 138, 138, 0.84), rgba(251, 193, 193, 0.46));
+      }
+
+      /* Hide default checkbox */
+      .custom-checkbox {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+     /* Custom Checkbox Styles */
+     .custom-checkbox { position: absolute; opacity: 0; width: 0; height: 0; }
+      .custom-checkbox-box {
+          width: 18px; height: 18px;
+          border: 2px solid rgba(28, 68, 84, 0.65);
+          display: inline-block; border-radius: 4px;
+          background-color: white; position: relative;
+          margin-right: 8px;
+      }
+
+      .custom-checkbox:hover + .custom-checkbox-box {
+          background-color: #F7DC6F;
+      }
+      .custom-checkbox:checked + .custom-checkbox-box {
+          background-color: #F15C61;
+          border-color: rgba(28, 68, 84, 0.85);
+      }
+      .custom-checkbox:checked + .custom-checkbox-box::after {
+          content: "";
+          position: absolute; top: 50%; left: 45%;
+            width: 3px; height: 8px;
+            border: solid white; border-width: 0 2.5px 2.5px 0;
+          transform: translate(-50%, -60%) rotate(43deg);
+      }
+   
+      @media screen and (max-width: 768px) {
+        #legend { bottom: 10px; right: 10px; padding: 8px; font-size: 16px; max-width: 160px; }
+        .custom-checkbox-box { width: 16px; height: 16px; }
+        #legend span { font-size: 14px; }
+      }
+      
+      @media screen and (max-width: 480px) {
+        #legend { bottom: 3px; right: 5px; padding: 6px; font-size: 14px; max-width: 140px; }
+        .custom-checkbox-box { width: 12px; height: 12px; }
+        #legend span { font-size: 12px; }}
     </style>
   </head>
 
@@ -144,7 +151,7 @@
     <div id="map"></div>
     <script>
       mapboxgl.accessToken = 'pk.eyJ1Ijoic3R1ZGlvdXJiYW4iLCJhIjoiY2x3cTIwcG83MWtxYjJrbnh3YnIzdHF1YSJ9.G_vrrjKBmzTTYlJ0tgjrBw';
-
+      //map container
       var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6',
@@ -160,6 +167,7 @@
       document.body.classList.remove('light-active');
       document.body.classList.add('dark-active');
 
+      //switch between dark and light states
       toggleButton.onclick = function() {
         if (isDark) {
           // Switch to light style
@@ -175,7 +183,7 @@
         isDark = !isDark; // Toggle the state
       };
 
-      // Set cursor style for specific layer interaction
+      // Set cursor style for specific layer interaction and Legend details
       map.on('load', () => {
         map.on('mouseenter', 'Suraksha 75', () => {
           map.getCanvas().classList.add('mapboxgl-canvas-pointer');
@@ -205,98 +213,119 @@
 
           // Define legend details with actual layer styles
           const legendLayers = {
-  'Suraksha 75': { fill: 'rgb(255, 0, 0)', stroke: 'rgb(180, 0, 0)' }, // Red
-  'Ongoing Junctions': { fill: 'hsla(242, 100%, 48%, 0.87)', stroke: 'hsl(232, 31%, 62%)' }, // Blue
-  'Selected Blackspots': { fill: 'rgb(0, 0, 255)', stroke: 'rgb(0, 0, 180)' }, // Blue
-  'Top 10 Blackspots': { fill: 'rgb(255, 165, 0)', stroke: 'rgb(200, 120, 0)' }, // Orange
-  'Crash Points': { fill: 'rgb(128, 0, 128)', stroke: 'rgb(90, 0, 90)' }, // Purple
-};
+            'Suraksha 75': { fill: "hsl(120, 85%, 67%)", stroke: 'rgba(28, 68, 84, 0.65)' }, // Green
+            'Ongoing Junctions': { fill: 'hsla(242, 100%, 48%, 0.87)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Blue
+            'Selected Blackspots': { fill: 'hsla(53, 100%, 57%, 0.77)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Yellow
+            'Top 10 Blackspots': { fill: 'hsl(0, 1%, 0%)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Black
+            'Crash Points': { fill: 'hsl(14, 100%, 43%)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Orange
+            'Crash Data Heat Map': { fill: 'linear-gradient(to bottom, rgb(243, 27, 27), rgba(244, 138, 138, 0.84), rgba(251, 193, 193, 0.46)' }
+          };
 
-  // Create legend container
-  const legend = document.createElement('div');
-  legend.id = 'legend';
-  legend.style.position = 'absolute';
-  legend.style.bottom = '20px';
-  legend.style.right = '20px';
-  legend.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-  legend.style.padding = '10px';
-  legend.style.borderRadius = '8px';
-  legend.style.fontFamily = "'Barlow', sans-serif";
-  legend.style.fontSize = '14px';
-  legend.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
-  legend.style.maxWidth = '200px';
 
-  // Add legend title
-  const legendTitle = document.createElement('div');
-  legendTitle.innerHTML = '<strong>Legend</strong>';
-  legendTitle.style.marginBottom = '5px';
-  legend.appendChild(legendTitle);
+          // Create legend container
+          const legend = document.createElement('div');
+          legend.id = 'legend';
+          legend.style.position = 'absolute';
+          legend.style.bottom = '20px';
+          legend.style.right = '20px';
+          
 
-  // Add legend items
-  Object.keys(legendLayers).forEach(layer => {
-    const item = document.createElement('div');
-    item.style.display = 'flex';
-    item.style.alignItems = 'center';
-    item.style.marginBottom = '5px';
+          // Add legend title
+          const legendTitle = document.createElement('div');
+          legendTitle.innerHTML = 'Legend : ';
+          legendTitle.style.marginBottom = '10px';
+          legendTitle.style.color = '#F15C61';  // Text color
+          legendTitle.style.fontFamily = "'Barlow', sans-serif"; // Font family
+          legendTitle.style.fontWeight = '500'; // Medium weight
+          legendTitle.style.fontSize = '20px'; // Adjust font size if needed
+          legend.appendChild(legendTitle);
 
-    // Checkbox
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = true; // Default: All layers visible
-    checkbox.style.marginRight = '8px';
-    checkbox.addEventListener('change', () => {
-      const visibility = checkbox.checked ? 'visible' : 'none';
-      if (map.getLayer(layer)) {
-        map.setLayoutProperty(layer, 'visibility', visibility);
-      }
-    });
+          Object.keys(legendLayers).forEach(layer => {
+          const item = document.createElement('div');
+          item.style.display = 'flex';
+          item.style.alignItems = 'center';
+          item.style.marginBottom = '10px';
 
-    // Color key
-    const key = document.createElement('span');
-    key.style.width = '12px';
-    key.style.height = '12px';
-    key.style.display = 'inline-block';
-    key.style.marginRight = '8px';
-    key.style.borderRadius = layer === 'Crash Data Heat Map' ? '0' : '50%'; // Circle for points, square for heatmap
+          // Create label to wrap checkbox and box together
+          const checkboxLabel = document.createElement('label');
+          checkboxLabel.style.display = 'flex';
+          checkboxLabel.style.alignItems = 'center';
+          checkboxLabel.style.cursor = 'pointer';
 
-    if (layer === 'Crash Data Heat Map') {
-      key.style.background = legendLayers[layer]; // Gradient for heatmap
-    } else {
-      key.style.backgroundColor = legendLayers[layer]; // Solid color for other layers
-    }
+          // Create hidden checkbox
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = true; // Default: All layers visible
+          checkbox.classList.add('custom-checkbox');
 
-    // Layer label
-    const label = document.createElement('span');
-    label.innerText = layer;
+          // Create custom styled box
+          const customCheckbox = document.createElement('span');
+          customCheckbox.classList.add('custom-checkbox-box');
 
-    // Assemble elements
-    item.appendChild(checkbox);
-    item.appendChild(key);
-    item.appendChild(label);
-    legend.appendChild(item);
-  });
+          // Handle visibility toggle
+          checkbox.addEventListener('change', () => {
+              const visibility = checkbox.checked ? 'visible' : 'none';
+              if (map.getLayer(layer)) {
+                  map.setLayoutProperty(layer, 'visibility', visibility);
+              }
+          });
 
-  // Add legend to the map container
-  document.body.appendChild(legend);
+          // Append checkbox inside label
+          checkboxLabel.appendChild(checkbox);
+          checkboxLabel.appendChild(customCheckbox);
 
-});
+          // Color key
+          const key = document.createElement('span');
+          key.style.display = 'inline-block';
+          key.style.marginRight = '8px';
+
+          if (layer === 'Crash Data Heat Map') {
+              key.style.width = '15px'; // Wider for gradient effect
+              key.style.height = '40px';
+              key.style.borderRadius = '0'; // Remove rounded edges
+              key.style.background = legendLayers[layer].fill;
+          } else {
+              key.style.width = '12px';
+              key.style.height = '12px';
+              key.style.borderRadius = '50%';
+              key.style.backgroundColor = legendLayers[layer].fill;
+              key.style.border = `2px solid ${legendLayers[layer].stroke}`;
+          }
+
+          // Layer label
+          const label = document.createElement('span');
+          label.innerText = layer;
+
+          // Assemble elements
+          item.appendChild(checkboxLabel);
+          item.appendChild(key);
+          item.appendChild(label);
+          legend.appendChild(item);
+      });
+
+
+          // Add legend to the map container
+          document.body.appendChild(legend);
+
+        });
 
 
       // Map click handlers
       map.on('click', (event) => {
-  const zoomLevel = map.getZoom(); // Get current zoom level
+    const zoomLevel = map.getZoom(); // Get current zoom level
 
-  const layers = {
-    'Suraksha 75': ['Agency'],
-    'Ongoing Junctions': ['Agency'],
-    'Selected Blackspots': ['Agency'],
-    'Top 10 Blackspots': [
-      { key: 'Rank', label: 'Rank' },
-      { key: 'Fatalities within 250m Radius (2019-2022)', label: 'Fatalities' }
-    ]
-  };
+    //query attributes for lebelling   
+    const layers = {
+      'Suraksha 75': ['Agency'],
+      'Ongoing Junctions': ['Agency'],
+      'Selected Blackspots': ['Agency'],
+      'Top 10 Blackspots': [
+        { key: 'Rank', label: 'Rank' },
+        { key: 'Fatalities within 250m Radius (2019-2022)', label: 'Fatalities' }
+      ]
+    };
 
-  Object.keys(layers).forEach(layer => {
+    Object.keys(layers).forEach(layer => {
     const features = map.queryRenderedFeatures(event.point, { layers: [layer] });
 
     if (features.length) {
