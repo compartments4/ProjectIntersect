@@ -162,6 +162,13 @@
       const toggleButton = document.getElementById('toggleButton');
       const toggleSlider = document.querySelector('.toggleSlider');
 
+      function updateTextHalo() {
+    if (map.getLayer('NH Names')) {
+        map.setPaintProperty('NH Names', 'text-halo-color', 'yellow'); // White halo
+        map.setPaintProperty('NH Names', 'text-halo-width', 10);
+       }
+        }
+        
       // Initialize the state
       let isDark = true;
       document.body.classList.remove('light-active');
@@ -169,60 +176,68 @@
 
       //switch between dark and light states
       toggleButton.onclick = function() {
-        if (isDark) {
-          // Switch to light style
-          map.setStyle('mapbox://styles/studiourban/clzxtd54p004001qo89bzgrsd');
-          document.body.classList.remove('dark-active');
-          document.body.classList.add('light-active');
-        } else {
-          // Switch to dark style
-          map.setStyle('mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6');
-          document.body.classList.remove('light-active');
-          document.body.classList.add('dark-active');
-        }
-        isDark = !isDark; // Toggle the state
+        const newStyle = isDark
+        ? 'mapbox://styles/studiourban/clzxtd54p004001qo89bzgrsd' // Light style
+        : 'mapbox://styles/studiourban/clwq2ijor010h01ny226ydlf6'; // Dark style
+
+    map.setStyle(newStyle);
+
+    // Wait for the new style to load before reapplying the text halo
+    map.once('style.load', () => {
+        updateTextHalo();
+    });
+
+    document.body.classList.toggle('dark-active', !isDark);
+    document.body.classList.toggle('light-active', isDark);
+    isDark = !isDark; // Toggle the state
       };
 
-      // Set cursor style for specific layer interaction and Legend details
-      map.on('load', () => {
-        map.on('mouseenter', 'Suraksha 75', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseenter', 'Ongoing Junctions', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseenter', 'Selected Blackspots', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseenter', 'Top 10 Blackspots', () => {
-          map.getCanvas().classList.add('mapboxgl-canvas-pointer');
-        });
+     
+      
+      map.on('load', () => 
+      {
+        // Set cursor style for specific layer interaction and Legend details
+          map.on('mouseenter', 'Suraksha 75', () => {
+            map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseenter', 'Ongoing Junctions', () => {
+            map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseenter', 'Selected Blackspots', () => {
+            map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseenter', 'Top 10 Blackspots', () => {
+            map.getCanvas().classList.add('mapboxgl-canvas-pointer');
+          });
 
-        map.on('mouseleave', 'Suraksha 75', () => {
-          map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseleave', 'Ongoing Junctions', () => {
-          map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseleave', 'Selected Blackspots', () => {
-          map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
-        });
-        map.on('mouseleave', 'Top 10 Blackspots', () => {
-          map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
-        });
+          map.on('mouseleave', 'Suraksha 75', () => {
+            map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseleave', 'Ongoing Junctions', () => {
+            map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseleave', 'Selected Blackspots', () => {
+            map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
+          });
+          map.on('mouseleave', 'Top 10 Blackspots', () => {
+            map.getCanvas().classList.remove('mapboxgl-canvas-pointer');
+          });
 
-          // Define legend details with actual layer styles
+        // Define legend details with actual layer styles
           const legendLayers = {
             'Suraksha 75': { fill: "hsl(120, 85%, 67%)", stroke: 'rgba(28, 68, 84, 0.65)' }, // Green
             'Ongoing Junctions': { fill: 'hsla(242, 100%, 48%, 0.87)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Blue
             'Selected Blackspots': { fill: 'hsla(53, 100%, 57%, 0.77)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Yellow
             'Top 10 Blackspots': { fill: 'hsl(0, 1%, 0%)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Black
             'Crash Points': { fill: 'hsl(14, 100%, 43%)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Orange
-            'Crash Data Heat Map': { fill: 'linear-gradient(to bottom, rgb(243, 27, 27), rgba(244, 138, 138, 0.84), rgba(251, 193, 193, 0.46)' }
+            'Crash Data Heat Map': { fill: 'linear-gradient(to bottom, rgb(243, 27, 27), rgba(244, 138, 138, 0.84), rgba(251, 193, 193, 0.46)' },
+            'Taluk Boundaries' : { fill: 'rgb(34, 59, 68)', stroke: 'rgb(255, 255, 255)' },
+            'BUD Boundary' : { fill: 'rgba(255, 122, 122, 0.06)', stroke: 'rgb(255, 255, 255)' }
           };
 
+        
 
-          // Create legend container
+       // Create legend container
           const legend = document.createElement('div');
           legend.id = 'legend';
           legend.style.position = 'absolute';
@@ -240,74 +255,109 @@
           legendTitle.style.fontSize = '20px'; // Adjust font size if needed
           legend.appendChild(legendTitle);
 
-          Object.keys(legendLayers).forEach(layer => {
-          const item = document.createElement('div');
-          item.style.display = 'flex';
-          item.style.alignItems = 'center';
-          item.style.marginBottom = '10px';
+          Object.keys(legendLayers).forEach(layer => 
+          {
+            const item = document.createElement('div');
+            item.style.display = 'flex';
+            item.style.alignItems = 'center';
+            item.style.marginBottom = '10px';
 
-          // Create label to wrap checkbox and box together
-          const checkboxLabel = document.createElement('label');
-          checkboxLabel.style.display = 'flex';
-          checkboxLabel.style.alignItems = 'center';
-          checkboxLabel.style.cursor = 'pointer';
+            // Skip checkbox for "BUD Boundary"
+            if (layer !== 'BUD Boundary' && layer !== 'Taluk Boundaries')
+            {
+                // Create label to wrap checkbox and box together
+                const checkboxLabel = document.createElement('label');
+                checkboxLabel.style.display = 'flex';
+                checkboxLabel.style.alignItems = 'center';
+                checkboxLabel.style.cursor = 'pointer';
 
-          // Create hidden checkbox
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.checked = true; // Default: All layers visible
-          checkbox.classList.add('custom-checkbox');
+                // Create hidden checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true; // Default: All layers visible
+                checkbox.classList.add('custom-checkbox');
 
-          // Create custom styled box
-          const customCheckbox = document.createElement('span');
-          customCheckbox.classList.add('custom-checkbox-box');
+                // Create custom styled box
+                const customCheckbox = document.createElement('span');
+                customCheckbox.classList.add('custom-checkbox-box');
 
-          // Handle visibility toggle
-          checkbox.addEventListener('change', () => {
-              const visibility = checkbox.checked ? 'visible' : 'none';
-              if (map.getLayer(layer)) {
-                  map.setLayoutProperty(layer, 'visibility', visibility);
-              }
-          });
+                // Handle visibility toggle
+                checkbox.addEventListener('change', () => {
+                    const visibility = checkbox.checked ? 'visible' : 'none';
+                    if (map.getLayer(layer)) {
+                        map.setLayoutProperty(layer, 'visibility', visibility);
+                 }
+                });
 
-          // Append checkbox inside label
-          checkboxLabel.appendChild(checkbox);
-          checkboxLabel.appendChild(customCheckbox);
+                  // Append checkbox inside label
+                  checkboxLabel.appendChild(checkbox);
+                  checkboxLabel.appendChild(customCheckbox);
 
-          // Color key
-          const key = document.createElement('span');
-          key.style.display = 'inline-block';
-          key.style.marginRight = '8px';
+                  // Append checkbox label to item
+                  item.appendChild(checkboxLabel);
+           }
 
-          if (layer === 'Crash Data Heat Map') {
-              key.style.width = '15px'; // Wider for gradient effect
-              key.style.height = '40px';
-              key.style.borderRadius = '0'; // Remove rounded edges
-              key.style.background = legendLayers[layer].fill;
-          } else {
-              key.style.width = '12px';
-              key.style.height = '12px';
-              key.style.borderRadius = '50%';
-              key.style.backgroundColor = legendLayers[layer].fill;
-              key.style.border = `2px solid ${legendLayers[layer].stroke}`;
-          }
+        // Color key
+        const key = document.createElement('span');
+        key.style.display = 'inline-block';
+        key.style.marginRight = '8px';
 
-          // Layer label
-          const label = document.createElement('span');
-          label.innerText = layer;
+        if (layer === 'Crash Data Heat Map') {
+            key.style.width = '15px'; // Wider for gradient effect
+            key.style.height = '40px';
+            key.style.borderRadius = '0'; // Remove rounded edges
+            key.style.background = legendLayers[layer].fill;
+        } 
+        else if (layer === 'BUD Boundary') {
+            key.style.width = '14px';
+            key.style.height = '14px';
+            key.style.borderRadius = '0'; // Remove rounded edges
+            key.style.background = legendLayers[layer].fill;
+            key.style.border = `1px dashed ${legendLayers[layer].stroke}`;
+        }
+        else if (layer === 'Taluk Boundaries') {
+            key.style.width = '14px';
+            key.style.height = '14px';
+            key.style.borderRadius = '0'; // Remove rounded edges
+            key.style.background = legendLayers[layer].fill;
+            key.style.border = `1px dashed ${legendLayers[layer].stroke}`;
+        }
+        else {
+            key.style.width = '12px';
+            key.style.height = '12px';
+            key.style.borderRadius = '50%';
+            key.style.backgroundColor = legendLayers[layer].fill;
+            key.style.border = `2px solid ${legendLayers[layer].stroke}`;
+        }
 
-          // Assemble elements
-          item.appendChild(checkboxLabel);
-          item.appendChild(key);
-          item.appendChild(label);
-          legend.appendChild(item);
-      });
+        // Layer label
+        const label = document.createElement('span');
+        label.innerText = layer;
 
-
-          // Add legend to the map container
-          document.body.appendChild(legend);
-
+        // Assemble elements
+        item.appendChild(key);
+        item.appendChild(label);
+        legend.appendChild(item);
+        
         });
+
+      // Add legend to the map container
+      document.body.appendChild(legend);
+
+      if (map.getLayer('NH Names')) 
+             { // Ensure the layer exists before modifying it
+              map.setLayoutProperty('NH Names', 'text-padding', 3);
+              map.setPaintProperty('NH Names', 'text-color', 'black');
+              map.setPaintProperty('NH Names', 'text-halo-color', 'yellow'); // White text outline
+              map.setPaintProperty('NH Names', 'text-halo-width', 6 ); // 2px border thickness
+              map.setPaintProperty('NH Names', 'text-background-color', 'yellow'); // Yellow background
+              map.setPaintProperty('NH Names', 'text-background-opacity', 1); // Ensure background is visible
+              } 
+              else 
+              {
+                 console.warn("Layer 'NH Names' not found!");
+              }
+ });
 
 
       // Map click handlers
