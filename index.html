@@ -21,28 +21,7 @@
               background-color: rgba(0, 0, 0, 0.336);
               z-index: 1; border-radius: 18px;
           }
-          .toggleButton {
-              position: absolute; top: 33px; right: 73px;
-              width: 120px; height: 39px;
-              display: flex; justify-content: space-between; align-items: center;
-              font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 400;
-              border: 2px solid rgba(255, 255, 255, 0.363);
-              padding: 0 20px; z-index: 3; border-radius: 20px;
-              color: white; cursor: pointer; user-select: none;
-          }
-          .toggleSlider {
-              position: absolute; top: 35px; right: 151px;
-              width: 40px; height: 39px;
-              background-color: #F15C61; display: flex;
-              justify-content: space-between; align-items: center;
-              font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 400;
-              padding: 0 22px; z-index: 2; border-radius: 18px;
-              transition: transform 0.4s;
-          }
-          .dark-active .toggleSlider { transform: translateX(0); }
-          .light-active .toggleSlider { transform: translateX(75px); }
-          .dark-active .text.dark, .light-active .text.light { opacity: 1; }
-          .light-active .text.dark, .dark-active .text.light { color: #f15c61b7; }
+
 
       /* Default cursor style */
       #map {  cursor: default;}
@@ -141,13 +120,8 @@
   </head>
 
   <body>
-    <div class="toggleBG"></div>
-    <div class="toggleButton" id="toggleButton">
-      <span class="text dark">DARK</span>
-      <span class="gap"></span>
-      <span class="text light">LIGHT</span>
+   <div class="toggleButton" id="toggleButton">
     </div>
-    <div class="toggleSlider"></div>
     <div id="map"></div>
     <script>
       mapboxgl.accessToken = 'pk.eyJ1Ijoic3R1ZGlvdXJiYW4iLCJhIjoiY2x3cTIwcG83MWtxYjJrbnh3YnIzdHF1YSJ9.G_vrrjKBmzTTYlJ0tgjrBw';
@@ -226,8 +200,6 @@
         // Define legend details with actual layer styles
           const legendLayers = {
             'Suraksha 75': { fill: "hsl(120, 85%, 67%)", stroke: 'rgba(28, 68, 84, 0.65)' }, // Green
-            'Ongoing Junctions': { fill: 'hsla(242, 100%, 48%, 0.87)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Blue
-            'Selected Blackspots': { fill: 'hsla(53, 100%, 57%, 0.77)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Yellow
             'Top 10 Blackspots': { fill: 'hsl(0, 1%, 0%)', stroke: 'rgba(252, 252, 252, 0.45)' }, // Black
             'Crash Points': { fill: 'hsl(14, 100%, 43%)', stroke: 'rgba(28, 68, 84, 0.65)' }, // Orange
             'Crash Data Heat Map': { fill: 'linear-gradient(to bottom, rgb(243, 27, 27), rgba(244, 138, 138, 0.84), rgba(251, 193, 193, 0.46)' },
